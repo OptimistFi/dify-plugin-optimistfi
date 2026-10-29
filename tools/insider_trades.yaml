@@ -1,0 +1,149 @@
+identity:
+  name: insider_trades
+  author: optimistfi
+  label:
+    en_US: Insider Trades
+    zh_Hans: 内部人交易
+    ja_JP: インサイダー取引
+    pt_BR: Negociações de insiders
+description:
+  human:
+    en_US: A US company's Form 4 insider filings from SEC EDGAR, newest first. Who, role, code, shares and dollar value, with the trade date and the date the filing made it public.
+    zh_Hans: 来自 SEC EDGAR 的美国公司 Form 4 内部人申报，最新的在前：人员、职位、代码、股数和金额，并给出交易日期和申报公开日期。
+    ja_JP: SEC EDGAR の米国企業の Form 4 インサイダー届出（新しい順）：人物、役職、コード、株数、金額。取引日と届出で公開された日付付き。
+    pt_BR: Os registros Form 4 de insiders de uma empresa dos EUA na SEC EDGAR, do mais recente. Quem, cargo, código, ações e valor em dólares, com a data do negócio e a data em que o registro o tornou público.
+  llm: A US company's Form 4 insider filings from SEC EDGAR, newest first - who, role, code, shares and dollar value. Each record's event_time is the trade date and as_of is the filing date, when the trade became public.
+parameters:
+  - name: company
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Company
+      zh_Hans: 公司
+      ja_JP: 企業
+      pt_BR: Empresa
+    human_description:
+      en_US: A US ticker (AAPL, BRK.B), a company name (Apple) or an SEC CIK.
+      zh_Hans: 美股代码（AAPL、BRK.B）、公司名称（Apple）或 SEC CIK 编号。
+      ja_JP: 米国株のティッカー（AAPL、BRK.B）、企業名（Apple）または SEC の CIK。
+      pt_BR: Um ticker dos EUA (AAPL, BRK.B), o nome da empresa (Apple) ou um CIK da SEC.
+    llm_description: A ticker (AAPL, BRK.B), a company name (Apple) or an SEC CIK.
+    placeholder:
+      en_US: AAPL
+      zh_Hans: AAPL
+      ja_JP: AAPL
+      pt_BR: AAPL
+  - name: start_date
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: From
+      zh_Hans: 开始日期
+      ja_JP: 開始日
+      pt_BR: De
+    human_description:
+      en_US: Earliest trade date, YYYY-MM-DD.
+      zh_Hans: 最早交易日期，格式 YYYY-MM-DD。
+      ja_JP: 最も古い取引日（YYYY-MM-DD）。
+      pt_BR: Data mais antiga do negócio, AAAA-MM-DD.
+    llm_description: Earliest trade date, YYYY-MM-DD.
+    placeholder:
+      en_US: 2026-01-01
+      zh_Hans: 2026-01-01
+      ja_JP: 2026-01-01
+      pt_BR: 2026-01-01
+  - name: end_date
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: To
+      zh_Hans: 结束日期
+      ja_JP: 終了日
+      pt_BR: Até
+    human_description:
+      en_US: Latest trade date, YYYY-MM-DD.
+      zh_Hans: 最晚交易日期，格式 YYYY-MM-DD。
+      ja_JP: 最も新しい取引日（YYYY-MM-DD）。
+      pt_BR: Data mais recente do negócio, AAAA-MM-DD.
+    llm_description: Latest trade date, YYYY-MM-DD.
+    placeholder:
+      en_US: 2026-01-01
+      zh_Hans: 2026-01-01
+      ja_JP: 2026-01-01
+      pt_BR: 2026-01-01
+  - name: limit
+    type: number
+    required: false
+    default: 25
+    min: 1
+    max: 100
+    form: llm
+    label:
+      en_US: Rows
+      zh_Hans: 行数
+      ja_JP: 行数
+      pt_BR: Linhas
+    human_description:
+      en_US: Most records to return, newest first.
+      zh_Hans: 最多返回的记录数，最新的在前。
+      ja_JP: 返す最大件数（新しい順）。
+      pt_BR: Máximo de registros, do mais recente.
+    llm_description: Most records to return, newest first.
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    company:
+      type: string
+      description: The company name and ticker.
+    count:
+      type: integer
+      description: Form 4 lines returned.
+    acquired_usd:
+      type: number
+      description: Dollar value of shares acquired in the lines returned.
+    disposed_usd:
+      type: number
+      description: Dollar value of shares disposed of in the lines returned.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/insider_trades.py

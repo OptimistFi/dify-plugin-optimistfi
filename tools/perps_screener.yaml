@@ -1,0 +1,338 @@
+identity:
+  name: perps_screener
+  author: optimistfi
+  label:
+    en_US: Perps Screener
+    zh_Hans: 永续合约筛选器
+    ja_JP: 無期限先物スクリーナー
+    pt_BR: Screener de perpétuos
+description:
+  human:
+    en_US: Rank perpetual futures across markets and venues. Where open interest is building, the biggest moves, funding extremes and gaps, liquidations, large trades, how Hyperliquid's $1M+ accounts lean, new listings and more.
+    zh_Hans: 跨市场和交易场所对永续合约进行排名：未平仓量增长、最大涨跌、资金费率极值与价差、清算、大额成交、Hyperliquid 百万美元以上账户的多空、新上线合约等。
+    ja_JP: 市場と取引所をまたいで無期限先物をランキング：建玉の増加、大きな値動き、資金調達率の極値と差、清算、大口取引、Hyperliquid の 100 万ドル以上口座のロング・ショート、新規上場など。
+    pt_BR: Classifique futuros perpétuos entre mercados e corretoras. Onde o open interest cresce, as maiores variações, extremos e diferenças de funding, liquidações, negócios grandes, como as contas de US$1 mi+ da Hyperliquid se posicionam, novas listagens e mais.
+  llm: One view across perpetual futures markets and venues. Views - trending (where open interest is building), movers (biggest price moves), funding (highest and lowest funding rates), funding_gaps (the same market's funding on different venues), open_interest, liquidations, liquidation_max_pain (the price band where the most positions would be liquidated, from Hyperliquid's mapped positions), whales (trades of $100K or more), lean (long against short for Hyperliquid accounts worth $1M or more), weekend (stock perps while US stocks are closed), new_listings, market_overview, fear_greed (a 0-100 crypto sentiment index), etf (spot bitcoin or ether ETF flows and holdings), sectors, exchanges (venues ranked by open interest), options (implied volatility and skew by expiry; needs a market), basis (dated futures premium; needs a market), premium (perps furthest from their index) and btc_cycle (bitcoin cycle and peak indicators).
+parameters:
+  - name: view
+    type: select
+    required: true
+    default: trending
+    form: llm
+    label:
+      en_US: View
+      zh_Hans: 视图
+      ja_JP: ビュー
+      pt_BR: Visão
+    human_description:
+      en_US: What to rank.
+      zh_Hans: 排名的内容。
+      ja_JP: 何をランキングするか。
+      pt_BR: O que classificar.
+    llm_description: The view to read.
+    options:
+      - value: trending
+        label:
+          en_US: Open interest building
+          zh_Hans: 未平仓量增长
+          ja_JP: 建玉が増えている銘柄
+          pt_BR: Open interest em alta
+      - value: movers
+        label:
+          en_US: Biggest price moves
+          zh_Hans: 涨跌幅最大
+          ja_JP: 値動きの大きい銘柄
+          pt_BR: Maiores variações de preço
+      - value: funding
+        label:
+          en_US: Highest and lowest funding
+          zh_Hans: 资金费率最高与最低
+          ja_JP: 資金調達率の上位と下位
+          pt_BR: Maior e menor funding
+      - value: funding_gaps
+        label:
+          en_US: Funding gaps between venues
+          zh_Hans: 跨交易所资金费率差
+          ja_JP: 取引所間の資金調達率の差
+          pt_BR: Diferenças de funding entre corretoras
+      - value: open_interest
+        label:
+          en_US: Largest open interest
+          zh_Hans: 未平仓量最大
+          ja_JP: 建玉の大きい銘柄
+          pt_BR: Maior open interest
+      - value: liquidations
+        label:
+          en_US: Liquidations
+          zh_Hans: 清算
+          ja_JP: 清算
+          pt_BR: Liquidações
+      - value: liquidation_max_pain
+        label:
+          en_US: Liquidation max pain
+          zh_Hans: 清算最大痛点
+          ja_JP: 清算が最も集中する価格帯
+          pt_BR: Faixa de liquidação máxima
+      - value: whales
+        label:
+          en_US: Large trades ($100K+)
+          zh_Hans: 大额成交（10 万美元以上）
+          ja_JP: 大口取引（10 万ドル以上）
+          pt_BR: Negócios grandes (US$100 mil+)
+      - value: lean
+        label:
+          en_US: Hyperliquid $1M+ accounts, long vs short
+          zh_Hans: Hyperliquid 百万美元以上账户多空
+          ja_JP: Hyperliquid 100 万ドル以上口座のロングとショート
+          pt_BR: Contas de US$1 mi+ na Hyperliquid, comprado vs vendido
+      - value: weekend
+        label:
+          en_US: Stock perps over the weekend
+          zh_Hans: 股票永续合约周末行情
+          ja_JP: 週末の株式無期限先物
+          pt_BR: Perpétuos de ações no fim de semana
+      - value: new_listings
+        label:
+          en_US: New listings
+          zh_Hans: 新上线合约
+          ja_JP: 新規上場
+          pt_BR: Novas listagens
+      - value: market_overview
+        label:
+          en_US: Market overview
+          zh_Hans: 市场概览
+          ja_JP: 市場概況
+          pt_BR: Visão geral do mercado
+      - value: fear_greed
+        label:
+          en_US: Crypto fear and greed
+          zh_Hans: 加密市场恐惧与贪婪指数
+          ja_JP: 暗号資産の恐怖と強欲指数
+          pt_BR: Medo e ganância em cripto
+      - value: etf
+        label:
+          en_US: Spot ETF flows
+          zh_Hans: 现货 ETF 资金流
+          ja_JP: 現物 ETF の資金フロー
+          pt_BR: Fluxos de ETFs à vista
+      - value: sectors
+        label:
+          en_US: Sectors
+          zh_Hans: 板块
+          ja_JP: セクター
+          pt_BR: Setores
+      - value: exchanges
+        label:
+          en_US: Venues ranked
+          zh_Hans: 交易场所排名
+          ja_JP: 取引所ランキング
+          pt_BR: Ranking de corretoras
+      - value: options
+        label:
+          en_US: Options (needs a market)
+          zh_Hans: 期权（需指定市场）
+          ja_JP: オプション（銘柄の指定が必要）
+          pt_BR: Opções (exige um mercado)
+      - value: basis
+        label:
+          en_US: Futures basis (needs a market)
+          zh_Hans: 期货基差（需指定市场）
+          ja_JP: 先物ベーシス（銘柄の指定が必要）
+          pt_BR: Basis de futuros (exige um mercado)
+      - value: premium
+        label:
+          en_US: Premium to the index
+          zh_Hans: 相对指数的溢价
+          ja_JP: インデックスに対するプレミアム
+          pt_BR: Prêmio sobre o índice
+      - value: btc_cycle
+        label:
+          en_US: Bitcoin cycle indicators
+          zh_Hans: 比特币周期指标
+          ja_JP: ビットコインのサイクル指標
+          pt_BR: Indicadores de ciclo do bitcoin
+  - name: market
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Market
+      zh_Hans: 市场
+      ja_JP: 銘柄
+      pt_BR: Mercado
+    human_description:
+      en_US: One market, for views that take one - large trades, funding gaps, max pain, the overview and ETF flows - and options and basis, which need one.
+      zh_Hans: 单个市场，适用于大额成交、资金费率差、清算最大痛点、市场概览和 ETF 资金流视图；期权和基差视图必须指定。
+      ja_JP: 単一の銘柄。大口取引、資金調達率の差、清算集中帯、市場概況、ETF フローで使用し、オプションとベーシスでは必須。
+      pt_BR: Um mercado, para as visões que aceitam um - negócios grandes, diferenças de funding, faixa de liquidação, visão geral e fluxos de ETFs - e opções e basis, que exigem um.
+    llm_description: One market (BTC, NVDA, gold). options and basis need one; trending, funding and liquidations rank every market and take none; the other views narrow to it.
+  - name: venue
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Venue
+      zh_Hans: 交易场所
+      ja_JP: 取引所
+      pt_BR: Corretora
+    human_description:
+      en_US: One venue id, such as hyperliquid, dydx, aster, lighter or gmx.
+      zh_Hans: 单个交易场所 ID，例如 hyperliquid、dydx、aster、lighter 或 gmx。
+      ja_JP: 取引所 ID（例：hyperliquid、dydx、aster、lighter、gmx）。
+      pt_BR: O id de uma corretora, como hyperliquid, dydx, aster, lighter ou gmx.
+    llm_description: One venue id (hyperliquid, dydx, aster, lighter, gmx). Only whales, new_listings, open_interest and exchanges take a venue; lean already covers Hyperliquid alone.
+  - name: asset_class
+    type: select
+    required: false
+    form: llm
+    label:
+      en_US: Asset class
+      zh_Hans: 资产类别
+      ja_JP: 資産クラス
+      pt_BR: Classe de ativo
+    human_description:
+      en_US: Only this kind of market.
+      zh_Hans: 仅限此类市场。
+      ja_JP: この種類の市場のみ。
+      pt_BR: Somente este tipo de mercado.
+    llm_description: Only this kind of market - crypto, equity, index, commodity or fx.
+    options:
+      - value: crypto
+        label:
+          en_US: Crypto
+          zh_Hans: 加密货币
+          ja_JP: 暗号資産
+          pt_BR: Cripto
+      - value: equity
+        label:
+          en_US: Stocks
+          zh_Hans: 股票
+          ja_JP: 株式
+          pt_BR: Ações
+      - value: index
+        label:
+          en_US: Indices
+          zh_Hans: 指数
+          ja_JP: 株価指数
+          pt_BR: Índices
+      - value: commodity
+        label:
+          en_US: Commodities
+          zh_Hans: 大宗商品
+          ja_JP: コモディティ
+          pt_BR: Commodities
+      - value: fx
+        label:
+          en_US: FX
+          zh_Hans: 外汇
+          ja_JP: 為替
+          pt_BR: Câmbio
+  - name: window
+    type: select
+    required: false
+    form: llm
+    label:
+      en_US: Window
+      zh_Hans: 时间范围
+      ja_JP: 期間
+      pt_BR: Janela
+    human_description:
+      en_US: Look-back for trending, movers, liquidations, large trades and new listings.
+      zh_Hans: 适用于未平仓量增长、涨跌幅、清算、大额成交和新上线合约的回看时间。
+      ja_JP: 建玉の増加、値動き、清算、大口取引、新規上場で遡る期間。
+      pt_BR: Período para open interest em alta, variações, liquidações, negócios grandes e novas listagens.
+    llm_description: Look-back for trending, movers, liquidations, whales and new_listings.
+    options:
+      - value: 1h
+        label:
+          en_US: 1 hour
+          zh_Hans: 1 小时
+          ja_JP: 1 時間
+          pt_BR: 1 hora
+      - value: 4h
+        label:
+          en_US: 4 hours
+          zh_Hans: 4 小时
+          ja_JP: 4 時間
+          pt_BR: 4 horas
+      - value: 24h
+        label:
+          en_US: 24 hours
+          zh_Hans: 24 小时
+          ja_JP: 24 時間
+          pt_BR: 24 horas
+  - name: limit
+    type: number
+    required: false
+    default: 10
+    min: 1
+    max: 25
+    form: llm
+    label:
+      en_US: Rows
+      zh_Hans: 行数
+      ja_JP: 行数
+      pt_BR: Linhas
+    human_description:
+      en_US: Rows per list, from 1 to 25.
+      zh_Hans: 每个列表的行数，1 到 25。
+      ja_JP: 各リストの行数（1〜25）。
+      pt_BR: Linhas por lista, de 1 a 25.
+    llm_description: Rows per list, from 1 to 25.
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    view:
+      type: string
+      description: The view read.
+    window:
+      type: string
+      description: The look-back the view used, when it takes one.
+    markets:
+      type: array
+      items:
+        type: string
+      description: The markets in the view's first ranking, in order.
+    chart:
+      type: string
+      description: An echarts bar chart of the view's main ranking, for an Answer node.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/perps_screener.py

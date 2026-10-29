@@ -1,0 +1,141 @@
+identity:
+  name: perp_history
+  author: optimistfi
+  label:
+    en_US: Perp History
+    zh_Hans: 永续合约历史
+    ja_JP: 無期限先物の推移
+    pt_BR: Histórico do perpétuo
+description:
+  human:
+    en_US: One perpetual futures market over 1, 7, 30 or 90 days. Price, open interest, funding, taker buying against selling and the net position of large accounts, with a ready-made chart.
+    zh_Hans: 单个永续合约在 1、7、30 或 90 天内的走势：价格、未平仓量、资金费率、主动买卖量和大户净持仓，并附带现成图表。
+    ja_JP: 単一の無期限先物の 1・7・30・90 日の推移：価格、建玉、資金調達率、テイカーの買いと売り、大口口座のネットポジション。グラフ付き。
+    pt_BR: Um mercado de futuros perpétuos ao longo de 1, 7, 30 ou 90 dias. Preço, open interest, funding, compras contra vendas a mercado e a posição líquida das grandes contas, com um gráfico pronto.
+  llm: One perpetual futures market over time - price, open interest, funding, taker buying against selling and the net position of large accounts, plus the latest order book depth. A long window can take up to a minute the first time; the answer then says it is still building.
+parameters:
+  - name: market
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Market
+      zh_Hans: 市场
+      ja_JP: 銘柄
+      pt_BR: Mercado
+    human_description:
+      en_US: A ticker or asset name, such as BTC, ETH, NVDA, TSLA or gold.
+      zh_Hans: 代码或资产名称，例如 BTC、ETH、NVDA、TSLA 或 gold。
+      ja_JP: ティッカーまたは資産名（例：BTC、ETH、NVDA、TSLA、gold）。
+      pt_BR: Um ticker ou nome de ativo, como BTC, ETH, NVDA, TSLA ou ouro.
+    llm_description: A ticker or symbol (BTC, NVDA, XAU), a company name (Tesla) or an asset name (bitcoin, gold).
+    placeholder:
+      en_US: BTC
+      zh_Hans: BTC
+      ja_JP: BTC
+      pt_BR: BTC
+  - name: window
+    type: select
+    required: false
+    default: 7d
+    form: llm
+    label:
+      en_US: Window
+      zh_Hans: 时间范围
+      ja_JP: 期間
+      pt_BR: Janela
+    human_description:
+      en_US: How far back to read.
+      zh_Hans: 回看多长时间。
+      ja_JP: どこまで遡るか。
+      pt_BR: Até quando olhar para trás.
+    llm_description: How far back - 1d (hourly steps), 7d (4-hourly), 30d or 90d (daily).
+    options:
+      - value: 1d
+        label:
+          en_US: 1 day
+          zh_Hans: 1 天
+          ja_JP: 1 日
+          pt_BR: 1 dia
+      - value: 7d
+        label:
+          en_US: 7 days
+          zh_Hans: 7 天
+          ja_JP: 7 日
+          pt_BR: 7 dias
+      - value: 30d
+        label:
+          en_US: 30 days
+          zh_Hans: 30 天
+          ja_JP: 30 日
+          pt_BR: 30 dias
+      - value: 90d
+        label:
+          en_US: 90 days
+          zh_Hans: 90 天
+          ja_JP: 90 日
+          pt_BR: 90 dias
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    market:
+      type: string
+      description: The market's base symbol.
+    window:
+      type: string
+      description: The window read.
+    price_start:
+      type: number
+      description: Price at the start of the window.
+    price_end:
+      type: number
+      description: Price at the end of the window.
+    open_interest_change:
+      type: number
+      description: Change in open interest over the window, as a fraction.
+    funding_annualized_now:
+      type: number
+      description: The latest open-interest-weighted funding, annualized, as a fraction.
+    chart:
+      type: string
+      description: An echarts block of price and funding over the window, for an Answer node.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/perp_history.py

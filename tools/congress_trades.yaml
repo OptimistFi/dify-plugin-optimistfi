@@ -1,0 +1,118 @@
+identity:
+  name: congress_trades
+  author: optimistfi
+  label:
+    en_US: Congress Trades
+    zh_Hans: 国会议员交易
+    ja_JP: 米議員の株取引
+    pt_BR: Negociações do Congresso
+description:
+  human:
+    en_US: US House stock-trade disclosures filed under the STOCK Act, by ticker or by member, newest first, each linked to its filing.
+    zh_Hans: 依据《STOCK 法案》提交的美国众议院股票交易披露，可按股票代码或议员查询，最新的在前，每条附申报文件链接。
+    ja_JP: STOCK 法に基づく米下院議員の株取引開示。ティッカーまたは議員名で検索、新しい順、各届出へのリンク付き。
+    pt_BR: Divulgações de negociações de ações da Câmara dos EUA, feitas sob o STOCK Act, por ticker ou por parlamentar, das mais recentes, cada uma com link para o registro.
+  llm: US House stock-trade disclosures filed under the STOCK Act, by ticker or by member, newest first. A ticker answer starts with a summary record (buys, sells, lean, most active members). event_time is the trade date the member reported and as_of the filing date.
+parameters:
+  - name: ticker
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Ticker
+      zh_Hans: 股票代码
+      ja_JP: ティッカー
+      pt_BR: Ticker
+    human_description:
+      en_US: A stock ticker, for which members traded it.
+      zh_Hans: 股票代码，查看哪些议员交易过它。
+      ja_JP: ティッカー。どの議員が取引したかを表示。
+      pt_BR: Um ticker, para ver quais parlamentares o negociaram.
+    llm_description: A stock ticker - which members traded it.
+    placeholder:
+      en_US: NVDA
+      zh_Hans: NVDA
+      ja_JP: NVDA
+      pt_BR: NVDA
+  - name: member
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Member
+      zh_Hans: 议员
+      ja_JP: 議員
+      pt_BR: Parlamentar
+    human_description:
+      en_US: A House member's name, for what that member traded.
+      zh_Hans: 众议员姓名，查看其交易记录。
+      ja_JP: 下院議員の名前。その議員の取引を表示。
+      pt_BR: O nome de um deputado, para ver o que ele negociou.
+    llm_description: A House member's name - what that member traded.
+  - name: limit
+    type: number
+    required: false
+    default: 25
+    min: 1
+    max: 100
+    form: llm
+    label:
+      en_US: Rows
+      zh_Hans: 行数
+      ja_JP: 行数
+      pt_BR: Linhas
+    human_description:
+      en_US: Most records to return, newest first.
+      zh_Hans: 最多返回的记录数，最新的在前。
+      ja_JP: 返す最大件数（新しい順）。
+      pt_BR: Máximo de registros, do mais recente.
+    llm_description: Most records to return, newest first.
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    count:
+      type: integer
+      description: Disclosures returned.
+    lean:
+      type: string
+      description: buying or selling across members, for a ticker.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/congress_trades.py

@@ -1,0 +1,190 @@
+identity:
+  name: company_filings
+  author: optimistfi
+  label:
+    en_US: SEC Filings
+    zh_Hans: SEC 文件
+    ja_JP: SEC 提出書類
+    pt_BR: Documentos na SEC
+description:
+  human:
+    en_US: A US company's own disclosures from SEC EDGAR. Filed 8-K events, earnings press releases, the text of its latest 8-Ks, or governance red flags such as late filings, auditor changes and clusters of insider selling.
+    zh_Hans: 美国公司在 SEC EDGAR 的自有披露：8-K 事件、财报新闻稿、最新 8-K 正文，或治理风险信号（如延迟申报、更换审计师、内部人集中卖出）。
+    ja_JP: SEC EDGAR の米国企業自身の開示：8-K イベント、決算プレスリリース、最新 8-K の本文、または遅延提出・監査人の交代・インサイダーの集中売却などのガバナンス上の警告。
+    pt_BR: As divulgações de uma empresa dos EUA na SEC EDGAR. Eventos 8-K, comunicados de resultados, o texto dos últimos 8-Ks ou alertas de governança como atrasos, troca de auditor e vendas concentradas de insiders.
+  llm: A US company's own disclosures from SEC EDGAR - filed 8-K events, its press releases, the text of its latest 8-Ks, or governance red flags such as late filings, auditor changes and insider selling clusters.
+parameters:
+  - name: company
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Company
+      zh_Hans: 公司
+      ja_JP: 企業
+      pt_BR: Empresa
+    human_description:
+      en_US: A US ticker (AAPL, BRK.B), a company name (Apple) or an SEC CIK.
+      zh_Hans: 美股代码（AAPL、BRK.B）、公司名称（Apple）或 SEC CIK 编号。
+      ja_JP: 米国株のティッカー（AAPL、BRK.B）、企業名（Apple）または SEC の CIK。
+      pt_BR: Um ticker dos EUA (AAPL, BRK.B), o nome da empresa (Apple) ou um CIK da SEC.
+    llm_description: A ticker (AAPL, BRK.B), a company name (Apple) or an SEC CIK.
+    placeholder:
+      en_US: AAPL
+      zh_Hans: AAPL
+      ja_JP: AAPL
+      pt_BR: AAPL
+  - name: kind
+    type: select
+    required: false
+    default: events
+    form: llm
+    label:
+      en_US: Kind
+      zh_Hans: 类型
+      ja_JP: 種類
+      pt_BR: Tipo
+    human_description:
+      en_US: Which disclosures to read.
+      zh_Hans: 要读取的披露类型。
+      ja_JP: 読み取る開示の種類。
+      pt_BR: Quais divulgações ler.
+    llm_description: events, press_releases, event_text or red_flags.
+    options:
+      - value: events
+        label:
+          en_US: 8-K events
+          zh_Hans: 8-K 事件
+          ja_JP: 8-K イベント
+          pt_BR: Eventos 8-K
+      - value: press_releases
+        label:
+          en_US: Press releases
+          zh_Hans: 新闻稿
+          ja_JP: プレスリリース
+          pt_BR: Comunicados
+      - value: event_text
+        label:
+          en_US: 8-K text
+          zh_Hans: 8-K 正文
+          ja_JP: 8-K 本文
+          pt_BR: Texto do 8-K
+      - value: red_flags
+        label:
+          en_US: Red flags
+          zh_Hans: 风险信号
+          ja_JP: 警告サイン
+          pt_BR: Alertas
+  - name: start_date
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: From
+      zh_Hans: 开始日期
+      ja_JP: 開始日
+      pt_BR: De
+    human_description:
+      en_US: Window start, YYYY-MM-DD.
+      zh_Hans: 起始日期，格式 YYYY-MM-DD。
+      ja_JP: 期間の開始（YYYY-MM-DD）。
+      pt_BR: Início da janela, AAAA-MM-DD.
+    llm_description: Window start, YYYY-MM-DD.
+    placeholder:
+      en_US: 2026-01-01
+      zh_Hans: 2026-01-01
+      ja_JP: 2026-01-01
+      pt_BR: 2026-01-01
+  - name: end_date
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: To
+      zh_Hans: 结束日期
+      ja_JP: 終了日
+      pt_BR: Até
+    human_description:
+      en_US: Window end, YYYY-MM-DD.
+      zh_Hans: 截止日期，格式 YYYY-MM-DD。
+      ja_JP: 期間の終了（YYYY-MM-DD）。
+      pt_BR: Fim da janela, AAAA-MM-DD.
+    llm_description: Window end, YYYY-MM-DD.
+    placeholder:
+      en_US: 2026-01-01
+      zh_Hans: 2026-01-01
+      ja_JP: 2026-01-01
+      pt_BR: 2026-01-01
+  - name: limit
+    type: number
+    required: false
+    default: 12
+    min: 1
+    max: 50
+    form: llm
+    label:
+      en_US: Rows
+      zh_Hans: 行数
+      ja_JP: 行数
+      pt_BR: Linhas
+    human_description:
+      en_US: Most records to return, newest first.
+      zh_Hans: 最多返回的记录数，最新的在前。
+      ja_JP: 返す最大件数（新しい順）。
+      pt_BR: Máximo de registros, do mais recente.
+    llm_description: Most records to return, newest first.
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    company:
+      type: string
+      description: The company name and ticker.
+    kind:
+      type: string
+      description: The kind of disclosure read.
+    count:
+      type: integer
+      description: Records returned.
+    flags_happened:
+      type: integer
+      description: Red-flag checks whose status is HAPPENED.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/company_filings.py

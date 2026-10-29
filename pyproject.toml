@@ -1,0 +1,32 @@
+[project]
+name = "optimistfi-dify-plugin"
+version = "0.0.1"
+description = "OptimistFi tools for Dify: perpetual futures, crypto prop firms and US company disclosures."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dify_plugin>=0.10.2,<0.11",
+    "httpx>=0.28.1,<1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0,<10",
+    "ruff>=0.17.3,<0.18",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+# Line length is the formatter's job (ruff format); long string literals stay whole.
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["optimistfi", "tools", "provider"]
+known-local-folder = ["conftest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

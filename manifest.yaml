@@ -1,0 +1,41 @@
+version: 0.0.1
+type: plugin
+author: optimistfi
+name: optimistfi
+label:
+  en_US: OptimistFi
+  zh_Hans: OptimistFi
+  ja_JP: OptimistFi
+  pt_BR: OptimistFi
+description:
+  en_US: Perpetual futures across 40+ venues, crypto prop firm rules and prices, and US insider and congressional trades, SEC filings and earnings dates. No API key.
+  zh_Hans: 覆盖 40 多家交易场所的永续合约数据、加密自营交易公司的规则与价格，以及美国内部人和国会议员交易、SEC 文件与财报日期。无需 API 密钥。
+  ja_JP: 40 以上の取引所にわたる無期限先物、暗号資産プロップファームのルールと価格、米国のインサイダー・議員の株取引、SEC 提出書類と決算日。API キー不要。
+  pt_BR: Futuros perpétuos em mais de 40 corretoras, regras e preços de mesas proprietárias de cripto, e negociações de insiders e do Congresso dos EUA, documentos na SEC e datas de resultados. Sem chave de API.
+icon: icon.png
+icon_dark: icon-dark.png
+created_at: "2026-10-28T00:00:00Z"
+repo: https://github.com/OptimistFi/dify-plugin-optimistfi
+privacy: PRIVACY.md
+contact: hello@optimistfi.com
+tags:
+  - finance
+  - business
+resource:
+  memory: 268435456
+plugins:
+  tools:
+    - provider/optimistfi.yaml
+network:
+  domains:
+    - mcp.optimistfi.com
+meta:
+  version: 0.0.1
+  minimum_dify_version: 1.14.2
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main

@@ -1,0 +1,106 @@
+identity:
+  name: company_calendar
+  author: optimistfi
+  label:
+    en_US: Earnings Calendar
+    zh_Hans: 财报日历
+    ja_JP: 決算カレンダー
+    pt_BR: Calendário de resultados
+description:
+  human:
+    en_US: What is ahead for a US company, nearest first. The next earnings date projected from its own SEC filing cadence, marked as an estimate with its basis, and clinical trial readouts.
+    zh_Hans: 美国公司即将发生的事件，最近的在前：根据其 SEC 申报规律推算的下一次财报日期（标注为估计并给出依据），以及临床试验结果。
+    ja_JP: 米国企業の今後の予定（近い順）：自社の SEC 提出周期から推定した次回決算日（推定と根拠を明記）と臨床試験の結果発表。
+    pt_BR: O que vem pela frente para uma empresa dos EUA, do mais próximo. A próxima data de resultados projetada pelo seu próprio ritmo de registros na SEC, marcada como estimativa e com a base, e leituras de ensaios clínicos.
+  llm: What is ahead for a US company, nearest first - the next earnings date projected from its own filing cadence, marked as an estimate with its basis, and clinical trial readouts.
+parameters:
+  - name: company
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Company
+      zh_Hans: 公司
+      ja_JP: 企業
+      pt_BR: Empresa
+    human_description:
+      en_US: A US ticker (AAPL, BRK.B), a company name (Apple) or an SEC CIK.
+      zh_Hans: 美股代码（AAPL、BRK.B）、公司名称（Apple）或 SEC CIK 编号。
+      ja_JP: 米国株のティッカー（AAPL、BRK.B）、企業名（Apple）または SEC の CIK。
+      pt_BR: Um ticker dos EUA (AAPL, BRK.B), o nome da empresa (Apple) ou um CIK da SEC.
+    llm_description: A ticker (AAPL, BRK.B), a company name (Apple) or an SEC CIK.
+    placeholder:
+      en_US: AAPL
+      zh_Hans: AAPL
+      ja_JP: AAPL
+      pt_BR: AAPL
+  - name: limit
+    type: number
+    required: false
+    default: 12
+    min: 1
+    max: 50
+    form: llm
+    label:
+      en_US: Rows
+      zh_Hans: 行数
+      ja_JP: 行数
+      pt_BR: Linhas
+    human_description:
+      en_US: Most records to return, newest first.
+      zh_Hans: 最多返回的记录数，最新的在前。
+      ja_JP: 返す最大件数（新しい順）。
+      pt_BR: Máximo de registros, do mais recente.
+    llm_description: Most records to return, newest first.
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    company:
+      type: string
+      description: The company name and ticker.
+    next_earnings:
+      type: string
+      description: The next earnings date, YYYY-MM-DD.
+    next_earnings_confidence:
+      type: string
+      description: estimated when projected from filing cadence, confirmed when the company announced it.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/company_calendar.py

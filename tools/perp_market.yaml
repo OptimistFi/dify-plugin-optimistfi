@@ -1,0 +1,112 @@
+identity:
+  name: perp_market
+  author: optimistfi
+  label:
+    en_US: Perp Market
+    zh_Hans: 永续合约行情
+    ja_JP: 無期限先物の銘柄
+    pt_BR: Mercado perpétuo
+description:
+  human:
+    en_US: One perpetual futures market across every venue OptimistFi reads, right now. Price, open interest, funding, maximum leverage, liquidation levels, the largest trades and how large accounts are positioned.
+    zh_Hans: 单个永续合约在 OptimistFi 读取的所有交易场所的实时行情：价格、未平仓量、资金费率、最高杠杆、清算价位、最大成交和大户持仓。
+    ja_JP: OptimistFi が読み取るすべての取引所での単一の無期限先物の現状：価格、建玉、資金調達率、最大レバレッジ、清算水準、大口取引、大口口座のポジション。
+    pt_BR: Um mercado de futuros perpétuos em todas as corretoras que a OptimistFi lê, agora. Preço, open interest, funding, alavancagem máxima, níveis de liquidação, os maiores negócios e o posicionamento das grandes contas.
+  llm: One perpetual futures market across venues right now - price and premium to the index or stock, open interest, funding, maximum leverage, liquidation levels, large trades and the positioning of large accounts. Covers crypto (BTC, ETH, SOL), stock (NVDA, TSLA), index and commodity (gold, oil) perps.
+parameters:
+  - name: market
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Market
+      zh_Hans: 市场
+      ja_JP: 銘柄
+      pt_BR: Mercado
+    human_description:
+      en_US: A ticker or asset name, such as BTC, ETH, NVDA, TSLA or gold.
+      zh_Hans: 代码或资产名称，例如 BTC、ETH、NVDA、TSLA 或 gold。
+      ja_JP: ティッカーまたは資産名（例：BTC、ETH、NVDA、TSLA、gold）。
+      pt_BR: Um ticker ou nome de ativo, como BTC, ETH, NVDA, TSLA ou ouro.
+    llm_description: A ticker or symbol (BTC, NVDA, XAU), a company name (Tesla) or an asset name (bitcoin, gold).
+    placeholder:
+      en_US: BTC
+      zh_Hans: BTC
+      ja_JP: BTC
+      pt_BR: BTC
+  - name: detail
+    type: select
+    required: false
+    default: full
+    form: form
+    label:
+      en_US: Response detail
+      zh_Hans: 返回内容
+      ja_JP: 返す内容
+      pt_BR: Detalhe da resposta
+    human_description:
+      en_US: The summary with the full data, or the summary alone to keep an agent's context small.
+      zh_Hans: 摘要加完整数据，或仅返回摘要以减少智能体的上下文。
+      ja_JP: 要約と全データ、またはエージェントのコンテキストを小さく保つための要約のみ。
+      pt_BR: O resumo com os dados completos, ou só o resumo para manter pequeno o contexto do agente.
+    options:
+      - value: full
+        label:
+          en_US: Summary and full data
+          zh_Hans: 摘要和完整数据
+          ja_JP: 要約と全データ
+          pt_BR: Resumo e dados completos
+      - value: summary
+        label:
+          en_US: Summary only
+          zh_Hans: 仅摘要
+          ja_JP: 要約のみ
+          pt_BR: Somente o resumo
+output_schema:
+  type: object
+  properties:
+    market:
+      type: string
+      description: The market's base symbol.
+    asset_class:
+      type: string
+      description: crypto, equity, index, commodity or fx.
+    venues:
+      type: integer
+      description: Venues listing the market.
+    open_interest_usd:
+      type: number
+      description: Open interest across venues, US dollars.
+    open_interest_change_24h:
+      type: number
+      description: Change in open interest over 24 hours, as a fraction.
+    funding_hourly:
+      type: number
+      description: Funding a long pays per hour, open-interest weighted, as a fraction.
+    funding_annualized:
+      type: number
+      description: Hourly funding times 8,760, as a fraction.
+    price_low:
+      type: number
+      description: Lowest price across venues.
+    price_high:
+      type: number
+      description: Highest price across venues.
+    price_change_24h:
+      type: number
+      description: Price change over 24 hours on the reference venue, as a fraction.
+    chart:
+      type: string
+      description: An echarts block of open interest and funding by venue, for an Answer node.
+    as_of:
+      type: string
+      description: When OptimistFi read the data (UTC).
+    source_url:
+      type: string
+      description: The page or filing the data comes from.
+    error:
+      type: string
+      description: Set when the call did not return data, with the reason.
+extra:
+  python:
+    source: tools/perp_market.py

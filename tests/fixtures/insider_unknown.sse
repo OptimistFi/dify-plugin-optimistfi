@@ -1,0 +1,3 @@
+event: message
+data: {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\n  \"error\": \"No entity matched 'ZZZZQ'\",\n  \"error_kind\": \"bad_input\",\n  \"looked\": false,\n  \"retry\": \"other\"\n}"}],"structuredContent":{"result":[{"error":"No entity matched 'ZZZZQ'","error_kind":"bad_input","looked":false,"retry":"other"}]},"isError":false}}
+

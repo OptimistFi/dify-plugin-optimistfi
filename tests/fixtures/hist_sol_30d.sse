@@ -1,0 +1,9 @@
+: ping - 2026-10-29 00:48:30.307561+00:00
+
+: ping - 2026-10-29 00:48:45.314988+00:00
+
+: ping - 2026-10-29 00:49:00.790815+00:00
+
+event: message
+data: {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\"entity\":{\"query\":\"SOL\"},\"type\":\"perps_history\",\"status\":\"building\",\"data\":null,\"note\":\"SOL's 30d history is being built and was not ready within 40 seconds, so this answer carries none of it; the build continues, and a later call is answered from it.\"}"}],"isError":false}}
+
