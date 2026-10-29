@@ -9,8 +9,6 @@ from dify_plugin.core.entities.plugin.setup import PluginConfiguration
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities.tool import ToolProviderConfiguration
 
-from optimistfi import render
-
 from conftest import ROOT
 
 LANGUAGES = {"en_US", "zh_Hans", "ja_JP", "pt_BR"}
@@ -26,7 +24,7 @@ def test_manifest_and_provider_load_with_the_sdks_own_models():
     provider = ToolProviderConfiguration(**load_yaml_file("provider/optimistfi.yaml"))
 
     assert manifest.name == "optimistfi"
-    assert len(provider.tools) == 8
+    assert len(provider.tools) == 4
 
 
 def test_marketplace_metadata_is_present():
@@ -62,13 +60,6 @@ def test_every_label_and_description_has_all_four_languages():
         walk(yaml.safe_load(path.read_text()), path.name)
 
 
-def test_every_screener_option_has_a_renderer_title():
-    spec = yaml.safe_load((ROOT / "tools" / "perps_screener.yaml").read_text())
-    options = [o["value"] for o in spec["parameters"][0]["options"]]
-
-    assert set(options) == set(render.VIEW_TITLES)
-
-
 # The Marketplace validator routes any package whose own prose matches these to a manual
 # financial-activity review (dify-marketplace-toolkit, toolkit/checks/financial.py).
 FINANCIAL_PATTERNS = [
@@ -101,12 +92,12 @@ FINANCIAL_PATTERNS = [
 ]
 
 
-def packaged_text_files():
+def packaged_text_files(extra=()):
     ignored = {".venv", "tests", ".git", ".github", "__pycache__", ".pytest_cache", ".ruff_cache", "docs"}
     for folder, dirs, files in os.walk(ROOT):
         dirs[:] = [d for d in dirs if d not in ignored]
         for name in files:
-            if name.endswith((".md", ".yaml", ".yml", ".py", ".toml", ".json")):
+            if name.endswith((".md", ".yaml", ".yml", ".py", ".toml", ".json", *extra)):
                 yield os.path.join(folder, name)
 
 
@@ -118,3 +109,48 @@ def test_package_prose_stays_clear_of_the_financial_activity_scan():
                 if any(re.search(p, line, re.IGNORECASE) for p in FINANCIAL_PATTERNS):
                     hits.append(f"{os.path.relpath(path, ROOT)}:{number}: {line.strip()[:100]}")
     assert not hits, "\n".join(hits)
+
+
+# The Marketplace review currently takes no Web3 functionality (langgenius/dify-plugins#3551, 2026-10-29),
+# so nothing in the package may describe or call crypto, perps or prop-firm data.
+WEB3_PATTERNS = [
+    r"\bcrypto",
+    r"\bperp",
+    r"\bfutures?\b",
+    r"\bhyperliquid\b",
+    r"\bbitcoin\b",
+    r"\b(?:BTC|ETH|SOL)\b",
+    r"\bethereum\b",
+    r"\bweb3\b",
+    r"\bblockchain\b",
+    r"\bon-?chain\b",
+    r"\bwallets?\b",
+    r"\bdefi\b",
+    r"\bstablecoins?\b",
+    r"\bprop\s+(?:firm|trading|challenge)",
+    r"\bfunding\s+rate",
+    r"\bliquidations?\b",
+    r"\bget_(?:perps|prop_firms)",
+    r"加密",
+    r"永续",
+    r"暗号資産",
+    r"無期限先物",
+    r"\bcripto",
+    r"\bperpétu",
+]
+
+
+def test_package_holds_no_web3_functionality():
+    hits = []
+    for path in packaged_text_files(extra=(".txt",)):
+        with open(path, encoding="utf-8") as handle:
+            for number, line in enumerate(handle, start=1):
+                if any(re.search(p, line, re.IGNORECASE) for p in WEB3_PATTERNS):
+                    hits.append(f"{os.path.relpath(path, ROOT)}:{number}: {line.strip()[:100]}")
+    assert not hits, "\n".join(hits)
+
+
+def test_every_readme_image_is_in_the_package():
+    for readme in [ROOT / "README.md", *sorted((ROOT / "readme").glob("*.md"))]:
+        for src in re.findall(r'<img src="([^"]+)"', readme.read_text()):
+            assert (readme.parent / src).resolve().is_file(), f"{readme.name}: {src}"

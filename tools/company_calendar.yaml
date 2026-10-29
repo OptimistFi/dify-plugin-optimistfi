@@ -47,11 +47,11 @@ parameters:
       ja_JP: 行数
       pt_BR: Linhas
     human_description:
-      en_US: Most records to return, newest first.
-      zh_Hans: 最多返回的记录数，最新的在前。
-      ja_JP: 返す最大件数（新しい順）。
-      pt_BR: Máximo de registros, do mais recente.
-    llm_description: Most records to return, newest first.
+      en_US: Most events to return, nearest first.
+      zh_Hans: 最多返回的事件数，最近的在前。
+      ja_JP: 返す最大件数（近い順）。
+      pt_BR: Máximo de eventos, do mais próximo.
+    llm_description: Most events to return, nearest first.
   - name: detail
     type: select
     required: false
@@ -94,7 +94,7 @@ output_schema:
       description: estimated when projected from filing cadence, confirmed when the company announced it.
     as_of:
       type: string
-      description: When OptimistFi read the data (UTC).
+      description: The as-of time on the earnings record, when the server sends one.
     source_url:
       type: string
       description: The page or filing the data comes from.

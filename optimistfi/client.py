@@ -16,7 +16,7 @@ ENDPOINT = "https://mcp.optimistfi.com/mcp"
 HEADERS = {
     "Content-Type": "application/json",
     "Accept": "application/json, text/event-stream",
-    "User-Agent": "optimistfi-dify-plugin/0.0.1",
+    "User-Agent": "optimistfi-dify-plugin/0.1.0",
 }
 TIMEOUT_SECONDS = 100.0
 

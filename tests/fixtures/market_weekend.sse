@@ -1,3 +1,0 @@
-event: message
-data: {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\"type\":\"perps_market\",\"as_of\":\"2026-10-28T23:00:00Z\",\"confidence\":\"reported\",\"source\":{\"name\":\"OptimistFi perps data layer — each venue's public market data, read hourly\",\"url\":\"https://optimistfi.com/perps/weekend\",\"license\":\"computed\"},\"data\":{\"view\":\"weekend\",\"asOf\":\"2026-10-28T23:00:00Z\",\"active\":false,\"building\":false,\"record\":{\"likely real\":{\"calls\":204,\"right\":195,\"wrong\":1,\"flat\":8,\"pending\":0},\"noise\":{\"calls\":1083,\"right\":473,\"wrong\":129,\"flat\":481,\"pending\":0}},\"page\":\"https://optimistfi.com/perps/weekend\"}}"}],"isError":false}}
-

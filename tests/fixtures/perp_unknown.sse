@@ -1,3 +1,0 @@
-event: message
-data: {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\"entity\":{\"query\":\"ZZZZQ\"},\"type\":\"perps\",\"data\":{\"venues\":0,\"markets\":[]},\"note\":\"no perpetual futures market OptimistFi reads lists ZZZZQ with a current reading\"}"}],"isError":false}}
-

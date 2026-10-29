@@ -1,3 +1,0 @@
-event: message
-data: {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\"type\":\"perps_market\",\"error\":\"This data isn't in our coverage yet — we haven't looked, so this isn't an absence.\",\"error_kind\":\"not_covered\",\"looked\":false,\"retry\":\"later\"}"}],"isError":false}}
-

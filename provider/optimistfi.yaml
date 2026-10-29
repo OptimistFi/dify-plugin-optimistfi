@@ -7,20 +7,16 @@ identity:
     ja_JP: OptimistFi
     pt_BR: OptimistFi
   description:
-    en_US: Perpetual futures across 40+ venues, crypto prop firm rules and prices, and US insider and congressional trades, SEC filings and earnings dates. No API key.
-    zh_Hans: 覆盖 40 多家交易场所的永续合约数据、加密自营交易公司的规则与价格，以及美国内部人和国会议员交易、SEC 文件与财报日期。无需 API 密钥。
-    ja_JP: 40 以上の取引所にわたる無期限先物、暗号資産プロップファームのルールと価格、米国のインサイダー・議員の株取引、SEC 提出書類と決算日。API キー不要。
-    pt_BR: Futuros perpétuos em mais de 40 corretoras, regras e preços de mesas proprietárias de cripto, e negociações de insiders e do Congresso dos EUA, documentos na SEC e datas de resultados. Sem chave de API.
+    en_US: US company disclosures. Insider trades from SEC Form 4, House members' stock trades, 8-K events and red-flag checks from SEC EDGAR, and projected earnings dates. No API key.
+    zh_Hans: 美国公司披露数据。SEC Form 4 内部人交易、美国众议院议员的股票交易、SEC EDGAR 的 8-K 事件与风险信号检查，以及预计财报日期。无需 API 密钥。
+    ja_JP: 米国企業の開示情報。SEC Form 4 のインサイダー取引、米下院議員の株取引、SEC EDGAR の 8-K イベントとレッドフラグ検査、予測決算日。API キー不要。
+    pt_BR: Divulgações de empresas dos EUA. Negociações de insiders do Form 4 da SEC, negociações de ações de membros da Câmara dos EUA, eventos 8-K e verificações de sinais de alerta da SEC EDGAR, e datas de resultados projetadas. Sem chave de API.
   icon: icon.png
   icon_dark: icon-dark.png
   tags:
     - finance
     - business
 tools:
-  - tools/perp_market.yaml
-  - tools/perp_history.yaml
-  - tools/perps_screener.yaml
-  - tools/prop_firms.yaml
   - tools/insider_trades.yaml
   - tools/congress_trades.yaml
   - tools/company_filings.yaml

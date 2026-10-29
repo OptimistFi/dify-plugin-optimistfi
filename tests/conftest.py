@@ -8,7 +8,7 @@ sys.path.insert(0, str(ROOT))
 
 
 def fixture(name: str) -> str:
-    """A reply recorded from mcp.optimistfi.com on 2026-10-28, as the server sent it."""
+    """A reply recorded from mcp.optimistfi.com on 2026-10-29, as the server sent it."""
     return (FIXTURES / f"{name}.sse").read_text()
 
 

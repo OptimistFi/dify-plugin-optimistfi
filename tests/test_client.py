@@ -9,13 +9,13 @@ from conftest import sse, tool_reply
 
 
 def test_payload_drops_unset_arguments():
-    sent = client.payload("get_prop_firms", {"firm": None, "rule": "", "account_usd": 50000})
+    sent = client.payload("get_insider_trades", {"start": None, "end": "", "entity": "AAPL"})
 
     assert sent == {
         "jsonrpc": "2.0",
         "id": 1,
         "method": "tools/call",
-        "params": {"name": "get_prop_firms", "arguments": {"account_usd": 50000}},
+        "params": {"name": "get_insider_trades", "arguments": {"entity": "AAPL"}},
     }
 
 
@@ -44,9 +44,9 @@ def test_the_reply_is_found_among_other_stream_messages():
 
 
 def test_tool_error_reads_as_the_server_wrote_it():
-    reply = client.parse(tool_reply(texts=["window: Input should be '1d'"], is_error=True))
+    reply = client.parse(tool_reply(texts=["kind: Input should be 'events'"], is_error=True))
 
-    assert reply.error == "window: Input should be '1d'"
+    assert reply.error == "kind: Input should be 'events'"
     assert reply.records == []
 
 
@@ -62,18 +62,18 @@ def test_call_sends_the_mcp_headers(post):
     response.raise_for_status.return_value = None
     post.return_value = response
 
-    client.call("get_perps", {"entity": "BTC"})
+    client.call("get_insider_trades", {"entity": "AAPL"})
 
     kwargs = post.call_args.kwargs
     assert post.call_args.args == (client.ENDPOINT,)
     assert kwargs["headers"]["Accept"] == "application/json, text/event-stream"
-    assert kwargs["json"]["params"] == {"name": "get_perps", "arguments": {"entity": "BTC"}}
+    assert kwargs["json"]["params"] == {"name": "get_insider_trades", "arguments": {"entity": "AAPL"}}
     assert kwargs["timeout"] == client.TIMEOUT_SECONDS
 
 
 @patch("optimistfi.client.httpx.post", side_effect=httpx.ReadTimeout("slow"))
 def test_timeout_explains_itself(_post):
-    error = client.call("get_perps_market", {"view": "liquidation_max_pain"}).error
+    error = client.call("get_filings", {"entity": "AAPL", "kind": "red_flags"}).error
 
     assert "did not answer within 100 seconds" in error
 
@@ -84,12 +84,14 @@ def test_http_status_is_reported(post):
     response = httpx.Response(503, request=request, text="unavailable")
     post.return_value = response
 
-    assert client.call("get_perps", {"entity": "BTC"}).error == "OptimistFi answered with HTTP 503."
+    assert client.call("get_insider_trades", {"entity": "AAPL"}).error == "OptimistFi answered with HTTP 503."
 
 
 @patch("optimistfi.client.httpx.post", side_effect=httpx.ConnectError("refused"))
 def test_network_error_is_reported(_post):
-    assert client.call("get_perps", {"entity": "BTC"}).error == "OptimistFi could not be reached: ConnectError."
+    assert (
+        client.call("get_insider_trades", {"entity": "AAPL"}).error == "OptimistFi could not be reached: ConnectError."
+    )
 
 
 def test_unreadable_body_is_an_error_not_a_crash():
@@ -98,14 +100,16 @@ def test_unreadable_body_is_an_error_not_a_crash():
         response.raise_for_status.return_value = None
         post.return_value = response
 
-        assert client.call("get_perps", {"entity": "BTC"}).error == "OptimistFi sent a reply that is not JSON."
+        assert (
+            client.call("get_insider_trades", {"entity": "AAPL"}).error == "OptimistFi sent a reply that is not JSON."
+        )
 
 
 def test_recorded_reply_parses():
     from conftest import fixture
 
-    reply = client.parse(fixture("perp_btc"))
+    reply = client.parse(fixture("insider_nvda"))
 
     assert reply.error is None
-    assert reply.records[0]["data"]["base"] == "BTC"
+    assert reply.records[0]["entity"]["ticker"] == "NVDA"
     assert json.dumps(reply.records)  # the records are plain JSON, ready for a json message

@@ -1,6 +1,6 @@
 """Number, date and table formatting for the markdown summaries.
 
-OptimistFi sends rates as fractions (0.0001 = 0.01%) and money in US dollars.
+OptimistFi sends money in US dollars.
 Every formatter returns an em dash for a missing value, so a gap in the data
 reads as a gap and never as a zero.
 """
@@ -58,52 +58,12 @@ def price(value: Any) -> str:
     return f"${text}"
 
 
-def pct(fraction: Any, signed: bool = True, digits: int = 2) -> str:
-    """0.0124 -> +1.24%."""
-    if not is_num(fraction):
-        return DASH
-    value = fraction * 100
-    # A small nonzero share keeps enough digits to show it is not zero.
-    while value != 0 and abs(value) < 10**-digits and digits < 4:
-        digits += 1
-    text = f"{value:+.{digits}f}%" if signed else f"{value:.{digits}f}%"
-    return text.replace("-", "−")
-
-
-def pct_points(value: Any, signed: bool = True) -> str:
-    """A value already in percent, such as distancePct: -8.25 -> −8.25%."""
-    if not is_num(value):
-        return DASH
-    text = f"{value:+.2f}%" if signed else f"{value:.2f}%"
-    return text.replace("-", "−")
-
-
-def funding_hourly(fraction: Any) -> str:
-    """What a long pays per hour: 8.077e-06 -> 0.0008%/h."""
-    if not is_num(fraction):
-        return DASH
-    return f"{fraction * 100:+.4f}%/h".replace("-", "−")
-
-
-def funding_annual(fraction: Any) -> str:
-    """Hourly funding times 8,760: 0.07075 -> +7.08%/yr."""
-    if not is_num(fraction):
-        return DASH
-    return f"{fraction * 100:+.2f}%/yr".replace("-", "−")
-
-
 def number(value: Any, digits: int = 0) -> str:
     if not is_num(value):
         return DASH
     if float(value).is_integer():
         digits = 0
     return f"{value:,.{digits}f}".replace("-", "−")
-
-
-def leverage(value: Any) -> str:
-    if not is_num(value):
-        return DASH
-    return f"{value:g}x"
 
 
 def parse_time(value: Any) -> datetime | None:
@@ -158,22 +118,7 @@ def table(headers: Sequence[str], rows: Iterable[Sequence[Any]]) -> str:
     return "\n".join(lines) if count else ""
 
 
-def facts(pairs: Iterable[Sequence[Any]]) -> str:
-    """Label and reading pairs as a bulleted list, which wraps in a narrow chat bubble where a table would scroll."""
-    return "\n".join(f"- **{label}:** {cell(value)}" for label, value in pairs)
-
-
-def short_when(value: Any) -> str:
-    """10-28 20:12, for table cells; the header says the times are UTC."""
-    parsed = parse_time(value)
-    return parsed.strftime("%m-%d %H:%M") if parsed else DASH
-
-
 def link(label: str, url: Any) -> str:
     if not isinstance(url, str) or not url.startswith(("https://", "http://")):
         return label
     return f"[{label}]({url})"
-
-
-def upper(value: Any) -> str:
-    return str(value).upper() if value else DASH

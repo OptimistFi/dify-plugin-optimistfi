@@ -1,10 +1,10 @@
 # Privacy Policy
 
-The OptimistFi plugin for Dify reads public market and company data. It does not collect personal data.
+The OptimistFi plugin for Dify reads public US company filings and disclosures. It does not collect personal data.
 
 ## What the plugin sends
 
-Each tool call sends one request to `https://mcp.optimistfi.com/mcp`, OptimistFi's public endpoint. The request holds only the tool's inputs: a market or company symbol, a firm name, a date range, a view name, a row count and similar filters. It holds no Dify user ID, conversation, message, file or credential. The plugin asks for no API key.
+Each tool call sends one request to `https://mcp.optimistfi.com/mcp`, OptimistFi's public endpoint. The request holds only the tool's inputs: a company ticker or name, a House member's name, a filing kind, a date range and a row count. It holds no Dify user ID, conversation, message, file or credential. The plugin asks for no API key.
 
 ## What the plugin stores
 
@@ -16,7 +16,7 @@ Like any web service, OptimistFi's servers record standard request logs (time, r
 
 ## Third parties
 
-The plugin calls no service other than OptimistFi. OptimistFi builds its answers from public sources such as SEC EDGAR, the US House Clerk and the exchanges' public market data.
+The plugin calls no service other than OptimistFi. OptimistFi builds its answers from public sources: SEC EDGAR and the US House Clerk.
 
 ## Contact
 
