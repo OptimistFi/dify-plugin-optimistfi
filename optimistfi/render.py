@@ -175,9 +175,12 @@ def insider_trades(records: Sequence[Any]) -> Summary:
 
 
 def _amount(data: dict[str, Any]) -> str:
+    """The filing's range; an exact amount is both bounds, and "Over $X" has no top."""
     low, high = data.get("amount_low"), data.get("amount_high")
+    if fmt.is_num(low) and high is None:
+        return f"over {fmt.usd_exact(low)}"
     if fmt.is_num(low) and fmt.is_num(high):
-        return f"{fmt.usd_exact(low)} – {fmt.usd_exact(high)}"
+        return fmt.usd_exact(low) if low == high else f"{fmt.usd_exact(low)} – {fmt.usd_exact(high)}"
     return DASH
 
 
@@ -203,11 +206,15 @@ def congress_trades(records: Sequence[Any]) -> Summary:
             f"({r['data'].get('state_district') or r['data'].get('chamber')}): "
             f"{r['data'].get('txn_type') or ('detail not parsed from a paper filing' if r['data'].get('index_only') else 'trade')} "
             f"{fmt.clip(r['data'].get('asset'), 70)}, {_amount(r['data'])}"
+            + (f", in {r['data']['account']}" if r["data"].get("account") else "")
             + (f" ({r['data']['owner']})" if r["data"].get("owner") else "")
             + f" · filed {fmt.link(str(r.get('as_of')), source_url(r))}"
             for r in trades[:25]
         )
     )
+    unread = sum(1 for r in trades[:25] if r["data"].get("account_not_read"))
+    if unread:
+        lines.append(f"{unread} of these trades come from filings whose account names are not read yet.")
     lines.append("_Source: US House Clerk disclosure filings (PTRs), read by OptimistFi_")
     variables = {
         "as_of": trades[0].get("as_of"),

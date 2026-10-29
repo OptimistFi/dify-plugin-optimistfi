@@ -10,7 +10,7 @@ US company disclosures as tools for Dify agents and workflows: insider trades fr
 **Author:** [OptimistFi](https://optimistfi.com) · **Source:** [github.com/OptimistFi/dify-plugin-optimistfi](https://github.com/OptimistFi/dify-plugin-optimistfi) · **Contact:** hello@optimistfi.com
 
 <div align="center">
-    <img src="_assets/screenshot-congress.png" alt="A Chatflow answer: House members' NVDA trade disclosures, with buys, sells and each filing linked" width="95%"/>
+    <img src="_assets/screenshot-congress.png" alt="A Chatflow answer: House members' NVDA trade disclosures, with buys, sells, the account of each trade and each filing linked" width="95%"/>
 </div>
 
 ## Overview
@@ -43,7 +43,7 @@ The plugin connects to `https://mcp.optimistfi.com/mcp` over HTTPS, so a self-ho
 | Tool | What it answers |
 |---|---|
 | **Insider Trades** | A US company's Form 4 filings from SEC EDGAR: who, role, Form 4 code, shares and dollar value, with the trade date and the date it became public. Open-market buys and sells come first, then grants, option exercises and gifts. |
-| **Congress Trades** | US House stock disclosures under the STOCK Act, by ticker or by member. A ticker answer opens with buys, sells and the most active members; each line links to its filing. |
+| **Congress Trades** | US House stock disclosures under the STOCK Act, by ticker or by member. A ticker answer opens with buys, sells and the most active members; each line names the account the trade was made in and links to its filing. |
 | **SEC Filings** | 8-K events, earnings press releases, the text of recent 8-Ks, and governance red flags (late filings, auditor changes, insider selling clusters). |
 | **Earnings Calendar** | The next earnings date projected from the company's own filing cadence, labeled as an estimate with its basis, and clinical trial readouts where a company has them. |
 

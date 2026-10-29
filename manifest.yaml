@@ -1,4 +1,4 @@
-version: 0.1.0
+version: 0.1.1
 type: plugin
 author: optimistfi
 name: optimistfi
@@ -30,7 +30,7 @@ network:
   domains:
     - mcp.optimistfi.com
 meta:
-  version: 0.1.0
+  version: 0.1.1
   minimum_dify_version: 1.14.2
   arch:
     - amd64

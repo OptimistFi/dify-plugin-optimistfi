@@ -67,6 +67,42 @@ def test_insider_rows_carry_trade_and_filing_dates():
     ) in text
 
 
+def test_congress_lines_name_the_account_so_look_alike_trades_read_as_separate():
+    text = summarize("congress_nvda").text
+
+    # Three buys alike in all else, one in each of Cleo Fields' accounts (House doc 20035669).
+    for account in (
+        "Morgan Stanley - E*TRADE #2",
+        "Morgan Stanley - E*TRADE - Fields Law Firm 2, LLC",
+        "Morgan Stanley - E*TRADE IRA",
+    ):
+        assert (
+            f"- **2026-10-01** Cleo Fields (LA06): buy NVIDIA Corporation - Common Stock (NVDA), $1,001 – $15,000, in {account}"
+            " · filed [2026-10-22](https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035669.pdf)"
+        ) in text
+    assert "not read yet" not in text
+
+
+def test_congress_counts_the_trades_whose_account_is_not_read_yet():
+    text = summarize("congress_ko").text
+
+    assert "6 of these trades come from filings whose account names are not read yet." in text
+
+
+@pytest.mark.parametrize(
+    ("low", "high", "text"),
+    [
+        (1001, 15000, "$1,001 – $15,000"),
+        (15, 15, "$15"),
+        (2722.5, 2722.5, "$2,722.50"),
+        (1000000, None, "over $1,000,000"),
+        (None, None, "—"),
+    ],
+)
+def test_house_amounts_read_as_the_filing_wrote_them(low, high, text):
+    assert render._amount({"amount_low": low, "amount_high": high}) == text
+
+
 def test_projected_earnings_reads_as_an_estimate():
     summary = summarize("calendar_aapl")
 

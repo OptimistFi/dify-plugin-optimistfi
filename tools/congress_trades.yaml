@@ -12,7 +12,7 @@ description:
     zh_Hans: 依据《STOCK 法案》提交的美国众议院股票交易披露，可按股票代码或议员查询，最新的在前，每条附申报文件链接。
     ja_JP: STOCK 法に基づく米下院議員の株取引開示。ティッカーまたは議員名で検索、新しい順、各届出へのリンク付き。
     pt_BR: Divulgações de negociações de ações da Câmara dos EUA, feitas sob o STOCK Act, por ticker ou por parlamentar, das mais recentes, cada uma com link para o registro.
-  llm: US House stock-trade disclosures filed under the STOCK Act, by ticker or by member, newest first. A ticker answer starts with a summary record (buys, sells, lean, most active members). event_time is the trade date the member reported and as_of the filing date.
+  llm: US House stock-trade disclosures filed under the STOCK Act, by ticker or by member, newest first. A ticker answer starts with a summary record (buys, sells, lean, most active members). event_time is the trade date the member reported and as_of the filing date. account is the brokerage account or trust a trade was made in, so two lines alike in all else are trades in two accounts; account_not_read marks a trade whose account is not read yet. An exact amount has amount_low equal to amount_high, and an "Over $X" amount has amount_high null.
 parameters:
   - name: ticker
     type: string
