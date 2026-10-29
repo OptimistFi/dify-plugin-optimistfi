@@ -17,7 +17,7 @@ ENDPOINT = "https://mcp.optimistfi.com/mcp"
 HEADERS = {
     "Content-Type": "application/json",
     "Accept": "application/json, text/event-stream",
-    "User-Agent": "optimistfi-dify-plugin/0.1.1",
+    "User-Agent": "optimistfi-dify-plugin/0.1.2",
 }
 TIMEOUT_SECONDS = 100.0
 # A gateway status is what the server sends while it restarts; one retry rides out a short gap.

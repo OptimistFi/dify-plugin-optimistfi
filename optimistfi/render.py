@@ -354,9 +354,21 @@ def _phase(value: Any) -> str | None:
     return ("Early " if found[0][0] else "") + "Phase " + "/".join(n for _, n in found)
 
 
+MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+
+def _day(record: dict[str, Any]) -> str:
+    """The date as the source gave it: ClinicalTrials.gov files most completion dates as a month only."""
+    d = record.get("data") or {}
+    day = str(d.get("projected_date") or record.get("event_time") or "")
+    if d.get("date_precision") == "month" and re.match(r"\d{4}-\d{2}", day):
+        return f"{MONTHS[int(day[5:7]) - 1]} {day[:4]}"
+    return day or DASH
+
+
 def _calendar_line(record: dict[str, Any]) -> str:
     d = record.get("data") or {}
-    when = f"- **{d.get('projected_date') or record.get('event_time') or DASH}**"
+    when = f"- **{_day(record)}**"
     status = record.get("confidence") or d.get("status") or DASH
     if d.get("event_type") == "trial_readout":
         facts = [
@@ -380,8 +392,10 @@ def company_calendar(records: Sequence[Any]) -> Summary:
     events = [r for r in records if isinstance(r, dict) and r.get("type") not in ("thesis_impact",) and r.get("data")]
     if not events:
         return generic(records, f"{company}: what is ahead")
-    lines = [f"### {company}: what is ahead", "\n".join(_calendar_line(r) for r in events[:MAX_ROWS])]
-    shown = events[:MAX_ROWS]
+    # The earnings estimate leads: LLY's sat twelfth, behind eleven nearer trial readouts, past the row limit.
+    earnings = [r for r in events if (r.get("data") or {}).get("subtype") == "earnings"]
+    shown = earnings + [r for r in events if r not in earnings][: MAX_ROWS - len(earnings)]
+    lines = [f"### {company}: what is ahead", "\n".join(_calendar_line(r) for r in shown)]
     if any((r.get("data") or {}).get("estimate_basis") for r in shown):
         lines.append(
             "An estimated earnings date is projected from the company's own filing cadence; it is not a date the company announced."
@@ -397,7 +411,7 @@ def company_calendar(records: Sequence[Any]) -> Summary:
     if any((r.get("data") or {}).get("event_type") == "trial_readout" for r in shown):
         sources.append("ClinicalTrials.gov")
     lines.append(f"_Source: {'; '.join(sources)}_")
-    earnings = next((r for r in events if (r.get("data") or {}).get("subtype") == "earnings"), {})
+    earnings = earnings[0] if earnings else {}
     variables = {
         "as_of": earnings.get("as_of") or events[0].get("as_of"),
         "source_url": source_url(earnings) if earnings else None,

@@ -124,13 +124,49 @@ def test_trial_readouts_name_the_study_and_link_its_registry_entry():
     text = summarize("calendar_lly").text
 
     assert (
-        "- **2027-02-01** trial readout, estimated: A First-In-Human Study of LY3954068 in Participants With Early"
-        " Symptomatic Alzheimer's Disease (Phase 1; Alzheimer Disease; recruiting)"
-        " · [ClinicalTrials.gov](https://clinicaltrials.gov/study/NCT06297590)"
+        "- **2026-11-01** trial readout, estimated: A Study of Retatrutide (LY3437943) Compared to Tirzepatide"
+        " (LY3298176) in Adults Who Have Obesity (Phase 3; Obesity; active not recruiting)"
+        " · [ClinicalTrials.gov](https://clinicaltrials.gov/study/NCT06662383)"
     ) in text
+    assert text.index("earnings, estimated") < text.index("trial readout"), text
     assert "primary completion date as its sponsor filed it on ClinicalTrials.gov" in text
     assert "fda event" not in text
     assert text.endswith("_Source: SEC EDGAR filing cadence, computed by OptimistFi; ClinicalTrials.gov_")
+
+
+LILLY = {"ticker": "LLY", "name": "ELI LILLY & Co", "cik": "0000059478"}
+
+
+def _readout(day: str, precision: str = "month") -> dict:
+    return {"entity": LILLY, "type": "fda_event", "direction": "forward", "event_time": day, "confidence": "estimated",
+            "source": {"name": "ClinicalTrials.gov", "url": "https://clinicaltrials.gov/study/NCT07000001"},
+            "data": {"event_type": "trial_readout", "drug": "A Study of Retatrutide", "phase": "PHASE3",
+                     "status": "ACTIVE_NOT_RECRUITING", "date_precision": precision}}
+
+
+def test_the_earnings_estimate_leads_and_is_never_cut_by_the_row_limit():
+    # LLY's estimate sat twelfth in the server's nearest-first list, behind eleven readouts, past MAX_ROWS.
+    earnings = {"entity": LILLY, "type": "corporate_event", "direction": "forward", "event_time": "2027-02-03",
+                "as_of": "2026-10-29T19:58:33+00:00", "confidence": "estimated",
+                "source": {"name": "computed from SEC 8-K Item 2.02 cadence", "url": "https://optimistfi.com"},
+                "data": {"subtype": "earnings", "projected_date": "2027-02-03", "last_reported": "2026-10-29",
+                         "estimate_basis": "52 weeks after the same quarter's report a year earlier (2026-02-04)"}}
+    summary = render.company_calendar([_readout(f"2026-11-{i:02d}", "day") for i in range(1, 12)] + [earnings])
+    items = [line for line in summary.text.splitlines() if line.startswith("- **")]
+
+    assert items[0].startswith("- **2027-02-03** earnings, estimated: 52 weeks after"), items[0]
+    assert len(items) == render.MAX_ROWS and items[1].startswith("- **2026-11-01** trial readout"), items
+    assert summary.variables["as_of"] == "2026-10-29T19:58:33+00:00"
+    assert summary.variables["next_earnings"] == "2027-02-03"
+
+
+@pytest.mark.parametrize(
+    ("day", "precision", "shown"),
+    [("2026-11-01", "month", "Nov 2026"), ("2026-12-01", "day", "2026-12-01"), ("2027-02-01", None, "2027-02-01")],
+)
+def test_a_month_only_completion_date_reads_as_its_month(day, precision, shown):
+    # ClinicalTrials.gov filed 40 of LLY's nearest 50 completion dates as a month; the server pins them to the 1st.
+    assert render._calendar_line(_readout(day, precision)).startswith(f"- **{shown}** trial readout")
 
 
 def test_8k_text_starts_at_the_first_item_not_the_xbrl_header():

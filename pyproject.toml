@@ -1,6 +1,6 @@
 [project]
 name = "optimistfi-dify-plugin"
-version = "0.1.1"
+version = "0.1.2"
 description = "OptimistFi tools for Dify: US insider and congressional trades, SEC filings and earnings dates."
 readme = "README.md"
 requires-python = ">=3.12"

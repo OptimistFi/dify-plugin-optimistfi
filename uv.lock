@@ -713,7 +713,7 @@ wheels = [
 
 [[package]]
 name = "optimistfi-dify-plugin"
-version = "0.1.1"
+version = "0.1.2"
 source = { virtual = "." }
 dependencies = [
     { name = "dify-plugin" },

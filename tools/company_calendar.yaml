@@ -8,11 +8,11 @@ identity:
     pt_BR: Calendário de resultados
 description:
   human:
-    en_US: What is ahead for a US company, nearest first. The next earnings date projected from its own SEC filing cadence, marked as an estimate with its basis, and clinical trial readouts.
-    zh_Hans: 美国公司即将发生的事件，最近的在前：根据其 SEC 申报规律推算的下一次财报日期（标注为估计并给出依据），以及临床试验结果。
-    ja_JP: 米国企業の今後の予定（近い順）：自社の SEC 提出周期から推定した次回決算日（推定と根拠を明記）と臨床試験の結果発表。
-    pt_BR: O que vem pela frente para uma empresa dos EUA, do mais próximo. A próxima data de resultados projetada pelo seu próprio ritmo de registros na SEC, marcada como estimativa e com a base, e leituras de ensaios clínicos.
-  llm: What is ahead for a US company, nearest first - the next earnings date projected from its own filing cadence, marked as an estimate with its basis, and clinical trial readouts.
+    en_US: What is ahead for a US company. The next earnings date projected from its own SEC filing cadence, marked as an estimate with its basis, then clinical trial readouts, nearest first.
+    zh_Hans: 美国公司即将发生的事件：根据其 SEC 申报规律推算的下一次财报日期（标注为估计并给出依据），然后是临床试验结果，最近的在前。
+    ja_JP: 米国企業の今後の予定：自社の SEC 提出周期から推定した次回決算日（推定と根拠を明記）と、近い順の臨床試験の結果発表。
+    pt_BR: O que vem pela frente para uma empresa dos EUA. A próxima data de resultados projetada pelo seu próprio ritmo de registros na SEC, marcada como estimativa e com a base, e depois as leituras de ensaios clínicos, da mais próxima.
+  llm: What is ahead for a US company - the next earnings date projected from its own filing cadence, marked as an estimate with its basis, then clinical trial readouts, nearest first.
 parameters:
   - name: company
     type: string
@@ -47,11 +47,11 @@ parameters:
       ja_JP: 行数
       pt_BR: Linhas
     human_description:
-      en_US: Most events to return, nearest first.
-      zh_Hans: 最多返回的事件数，最近的在前。
-      ja_JP: 返す最大件数（近い順）。
-      pt_BR: Máximo de eventos, do mais próximo.
-    llm_description: Most events to return, nearest first.
+      en_US: Most events to return.
+      zh_Hans: 最多返回的事件数。
+      ja_JP: 返す最大件数。
+      pt_BR: Máximo de eventos.
+    llm_description: Most events to return.
   - name: detail
     type: select
     required: false
@@ -91,7 +91,7 @@ output_schema:
       description: The next earnings date, YYYY-MM-DD.
     next_earnings_confidence:
       type: string
-      description: estimated when projected from filing cadence, confirmed when the company announced it.
+      description: estimated - the date is projected from the company's filing cadence, not announced by it.
     as_of:
       type: string
       description: The as-of time on the earnings record, when the server sends one.
