@@ -138,19 +138,40 @@ LILLY = {"ticker": "LLY", "name": "ELI LILLY & Co", "cik": "0000059478"}
 
 
 def _readout(day: str, precision: str = "month") -> dict:
-    return {"entity": LILLY, "type": "fda_event", "direction": "forward", "event_time": day, "confidence": "estimated",
-            "source": {"name": "ClinicalTrials.gov", "url": "https://clinicaltrials.gov/study/NCT07000001"},
-            "data": {"event_type": "trial_readout", "drug": "A Study of Retatrutide", "phase": "PHASE3",
-                     "status": "ACTIVE_NOT_RECRUITING", "date_precision": precision}}
+    return {
+        "entity": LILLY,
+        "type": "fda_event",
+        "direction": "forward",
+        "event_time": day,
+        "confidence": "estimated",
+        "source": {"name": "ClinicalTrials.gov", "url": "https://clinicaltrials.gov/study/NCT07000001"},
+        "data": {
+            "event_type": "trial_readout",
+            "drug": "A Study of Retatrutide",
+            "phase": "PHASE3",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "date_precision": precision,
+        },
+    }
 
 
 def test_the_earnings_estimate_leads_and_is_never_cut_by_the_row_limit():
     # LLY's estimate sat twelfth in the server's nearest-first list, behind eleven readouts, past MAX_ROWS.
-    earnings = {"entity": LILLY, "type": "corporate_event", "direction": "forward", "event_time": "2027-02-03",
-                "as_of": "2026-10-29T19:58:33+00:00", "confidence": "estimated",
-                "source": {"name": "computed from SEC 8-K Item 2.02 cadence", "url": "https://optimistfi.com"},
-                "data": {"subtype": "earnings", "projected_date": "2027-02-03", "last_reported": "2026-10-29",
-                         "estimate_basis": "52 weeks after the same quarter's report a year earlier (2026-02-04)"}}
+    earnings = {
+        "entity": LILLY,
+        "type": "corporate_event",
+        "direction": "forward",
+        "event_time": "2027-02-03",
+        "as_of": "2026-10-29T19:58:33+00:00",
+        "confidence": "estimated",
+        "source": {"name": "computed from SEC 8-K Item 2.02 cadence", "url": "https://optimistfi.com"},
+        "data": {
+            "subtype": "earnings",
+            "projected_date": "2027-02-03",
+            "last_reported": "2026-10-29",
+            "estimate_basis": "52 weeks after the same quarter's report a year earlier (2026-02-04)",
+        },
+    }
     summary = render.company_calendar([_readout(f"2026-11-{i:02d}", "day") for i in range(1, 12)] + [earnings])
     items = [line for line in summary.text.splitlines() if line.startswith("- **")]
 
