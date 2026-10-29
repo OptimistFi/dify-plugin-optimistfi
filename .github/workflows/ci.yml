@@ -29,11 +29,12 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Fetch the Dify plugin CLI 0.6.12 and check its digest
         run: |
-          curl -fsSL -o dify https://github.com/langgenius/dify-plugin-daemon/releases/download/0.6.12/dify-plugin-linux-amd64
-          echo "f5190893643492c3f17f12c9752615a5652e47bbf30e84298634e176611aa108  dify" | sha256sum -c
-          chmod +x dify
-      - run: ./dify plugin package . -o optimistfi.difypkg
+          cli="$RUNNER_TEMP/dify"
+          curl -fsSL -o "$cli" https://github.com/langgenius/dify-plugin-daemon/releases/download/0.6.12/dify-plugin-linux-amd64
+          echo "f5190893643492c3f17f12c9752615a5652e47bbf30e84298634e176611aa108  $cli" | sha256sum -c
+          chmod +x "$cli"
+      - run: '"$RUNNER_TEMP/dify" plugin package . -o "$RUNNER_TEMP/optimistfi.difypkg"'
       - uses: actions/upload-artifact@v4
         with:
           name: optimistfi-difypkg
-          path: optimistfi.difypkg
+          path: ${{ runner.temp }}/optimistfi.difypkg
