@@ -116,28 +116,33 @@ def _company(records: Sequence[Any]) -> str:
     return f"{name} ({ticker})" if name and ticker else str(name or ticker or "")
 
 
-# The SEC's Form 4 codes (Form 4, General Instructions, item 8).
-FORM4_CODES = {
-    "P": "purchase",
-    "S": "sale",
-    "A": "award",
-    "D": "to company",
-    "F": "tax withheld",
-    "M": "option exercise",
-    "X": "option exercise",
-    "O": "option exercise",
-    "C": "conversion",
-    "G": "gift",
-    "J": "other",
-    "W": "inheritance",
+# The SEC's Form 4 codes as verbs (Form 4, General Instructions, item 8), for a reply without the server's own.
+FORM4_VERBS = {
+    "P": "bought",
+    "S": "sold",
+    "A": "received",
+    "D": "returned to the company",
+    "F": "surrendered for tax",
+    "M": "exercised",
+    "X": "exercised",
+    "O": "exercised",
+    "C": "converted",
+    "G": "gave away",
+    "W": "inherited",
 }
 
 
-def _form4_code(code: Any) -> str:
-    if not code:
-        return DASH
-    meaning = FORM4_CODES.get(str(code).upper())
-    return f"{code} ({meaning})" if meaning else str(code)
+def _insider_act(data: dict[str, Any]) -> str:
+    """What the insider did as a verb ("sold", "gave away"), then the money and the shares."""
+    code = str(data.get("txn_code") or "").upper()
+    verb = data.get("direction") or FORM4_VERBS.get(code) or (f"filed Form 4 code {code} for" if code else "reported")
+    money = fmt.usd(data["value"]) if fmt.is_num(data.get("value")) and data["value"] else None
+    shares = f"{fmt.number(data['shares'])} shares" if fmt.is_num(data.get("shares")) else None
+    if shares and fmt.is_num(data.get("price")) and data["price"]:
+        shares += f" at {fmt.price(data['price'])}"
+    detail = ", ".join(part for part in (money, shares) if part)
+    act = f"{verb} {detail}" if detail else verb
+    return act + (", to cover tax on vesting stock" if data.get("sell_to_cover") else "")
 
 
 def insider_trades(records: Sequence[Any]) -> Summary:
@@ -153,9 +158,7 @@ def insider_trades(records: Sequence[Any]) -> Summary:
         "Each line gives the trade date first and the date the filing made it public last.",
         "\n".join(
             f"- **{r.get('event_time')}** {fmt.clip(r['data'].get('insider_display_name') or r['data'].get('insider_name'), 60)}: "
-            f"{_form4_code(r['data'].get('txn_code'))} of {fmt.usd(r['data'].get('value'))}, "
-            f"{fmt.number(r['data'].get('shares'))} shares at {fmt.price(r['data'].get('price'))} · "
-            f"filed {fmt.link(str(r.get('as_of')), source_url(r))}"
+            f"{_insider_act(r['data'])} · filed {fmt.link(str(r.get('as_of')), source_url(r))}"
             for r in trades[:25]
         ),
         "_Source: SEC EDGAR Form 4, read by OptimistFi_",
@@ -341,33 +344,59 @@ def company_filings(records: Sequence[Any], kind: str = "events") -> Summary:
 # -------------------------------------------------------------------- calendar
 
 
+PHASE_RE = re.compile(r"(EARLY_)?PHASE(\d)")
+
+
+def _phase(value: Any) -> str | None:
+    found = PHASE_RE.findall(str(value or ""))
+    if not found:
+        return None
+    return ("Early " if found[0][0] else "") + "Phase " + "/".join(n for _, n in found)
+
+
+def _calendar_line(record: dict[str, Any]) -> str:
+    d = record.get("data") or {}
+    when = f"- **{d.get('projected_date') or record.get('event_time') or DASH}**"
+    status = record.get("confidence") or d.get("status") or DASH
+    if d.get("event_type") == "trial_readout":
+        facts = [
+            _phase(d.get("phase")),
+            d.get("indication"),
+            str(d.get("status") or "").replace("_", " ").lower() or None,
+        ]
+        about = "; ".join(fmt.clip(f, 90) for f in facts if f)
+        return (
+            f"{when} trial readout, {status}: {fmt.clip(d.get('drug'), 120)}"
+            + (f" ({about})" if about else "")
+            + f" · {fmt.link('ClinicalTrials.gov', source_url(record))}"
+        )
+    event = (d.get("subtype") or record.get("type") or "event").replace("_", " ")
+    line = f"{when} {event}, {status}" + (f": {d['estimate_basis']}" if d.get("estimate_basis") else "")
+    return line + (f". Last reported {d['last_reported']}." if d.get("last_reported") else "")
+
+
 def company_calendar(records: Sequence[Any]) -> Summary:
     company = _company(records)
     events = [r for r in records if isinstance(r, dict) and r.get("type") not in ("thesis_impact",) and r.get("data")]
     if not events:
         return generic(records, f"{company}: what is ahead")
-    lines = [f"### {company}: what is ahead"]
-    rows = []
-    for r in events[:MAX_ROWS]:
-        d = r.get("data") or {}
-        basis = d.get("estimate_basis")
-        status = r.get("confidence") or d.get("status")
-        rows.append(
-            [
-                d.get("projected_date") or r.get("event_time"),
-                (d.get("subtype") or r.get("type") or DASH).replace("_", " "),
-                f"{status}" + (f": {basis}" if basis else ""),
-                d.get("last_reported") or DASH,
-            ]
+    lines = [f"### {company}: what is ahead", "\n".join(_calendar_line(r) for r in events[:MAX_ROWS])]
+    shown = events[:MAX_ROWS]
+    if any((r.get("data") or {}).get("estimate_basis") for r in shown):
+        lines.append(
+            "An estimated earnings date is projected from the company's own filing cadence; it is not a date the company announced."
         )
-    lines.append(fmt.table(["Date", "Event", "Status and basis", "Last reported"], rows))
-    lines.append(
-        "An estimated date is projected from the company's own filing cadence; it is not a date the company announced."
-    )
+    if any((r.get("data") or {}).get("event_type") == "trial_readout" for r in shown):
+        lines.append(
+            "A trial readout date is the study's primary completion date as its sponsor filed it on ClinicalTrials.gov."
+        )
     thesis = _thesis_line(records)
     if thesis:
         lines.append(thesis)
-    lines.append("_Source: SEC EDGAR filing cadence, computed by OptimistFi_")
+    sources = ["SEC EDGAR filing cadence, computed by OptimistFi"]
+    if any((r.get("data") or {}).get("event_type") == "trial_readout" for r in shown):
+        sources.append("ClinicalTrials.gov")
+    lines.append(f"_Source: {'; '.join(sources)}_")
     earnings = next((r for r in events if (r.get("data") or {}).get("subtype") == "earnings"), {})
     variables = {
         "as_of": earnings.get("as_of") or events[0].get("as_of"),

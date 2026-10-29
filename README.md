@@ -42,7 +42,7 @@ The plugin connects to `https://mcp.optimistfi.com/mcp` over HTTPS, so a self-ho
 
 | Tool | What it answers |
 |---|---|
-| **Insider Trades** | A US company's Form 4 filings from SEC EDGAR: who, role, Form 4 code, shares and dollar value, with the trade date and the date it became public. Open-market buys and sells come first, then grants, option exercises and gifts. |
+| **Insider Trades** | A US company's Form 4 filings from SEC EDGAR: who, role, what they did, shares and dollar value, with the trade date and the date it became public. Open-market buys and sells come first, then grants, option exercises and gifts. |
 | **Congress Trades** | US House stock disclosures under the STOCK Act, by ticker or by member. A ticker answer opens with buys, sells and the most active members; each line names the account the trade was made in and links to its filing. |
 | **SEC Filings** | 8-K events, earnings press releases, the text of recent 8-Ks, and governance red flags (late filings, auditor changes, insider selling clusters). |
 | **Earnings Calendar** | The next earnings date projected from the company's own filing cadence, labeled as an estimate with its basis, and clinical trial readouts where a company has them. |
@@ -62,7 +62,7 @@ Labels, descriptions and forms are in English, Simplified Chinese, Japanese and 
 2. **Insider Trades** tool node: *Company* set to the user's message (`sys.query`), *Rows* `10`.
 3. **Answer** node: insert the tool node's `text` variable.
 
-The answer lists the company's open-market buys and sells first, then other Form 4 filings, each with the trade date, the insider, the Form 4 code, the dollar value and the filing date, each linked to the filing at SEC EDGAR.
+The answer lists the company's open-market buys and sells first, then other Form 4 filings, each with the trade date, the insider, what they did, the dollar value and the filing date, each linked to the filing at SEC EDGAR.
 
 ## Example: an agent
 

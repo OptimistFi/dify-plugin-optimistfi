@@ -7,6 +7,7 @@ goes in and the reply comes back as server-sent events. No key is needed.
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -19,6 +20,9 @@ HEADERS = {
     "User-Agent": "optimistfi-dify-plugin/0.1.1",
 }
 TIMEOUT_SECONDS = 100.0
+# A gateway status is what the server sends while it restarts; one retry rides out a short gap.
+GATEWAY = {502, 503, 504}
+RETRY_SECONDS = 5.0
 
 
 @dataclass
@@ -74,6 +78,9 @@ def parse(body: str) -> Reply:
 def call(tool: str, arguments: dict[str, Any], timeout: float = TIMEOUT_SECONDS) -> Reply:
     try:
         response = httpx.post(ENDPOINT, headers=HEADERS, json=payload(tool, arguments), timeout=timeout)
+        if response.status_code in GATEWAY:
+            time.sleep(RETRY_SECONDS)
+            response = httpx.post(ENDPOINT, headers=HEADERS, json=payload(tool, arguments), timeout=timeout)
         response.raise_for_status()
         return parse(response.text)
     except httpx.TimeoutException:
@@ -84,7 +91,15 @@ def call(tool: str, arguments: dict[str, Any], timeout: float = TIMEOUT_SECONDS)
             )
         )
     except httpx.HTTPStatusError as error:
-        return Reply(error=f"OptimistFi answered with HTTP {error.response.status_code}.")
+        code = error.response.status_code
+        if code in GATEWAY:
+            return Reply(
+                error=(
+                    f"OptimistFi's server did not answer (HTTP {code}) on two tries {RETRY_SECONDS:.0f} seconds apart. "
+                    "It sends this status while it restarts, which takes a few minutes."
+                )
+            )
+        return Reply(error=f"OptimistFi answered with HTTP {code}.")
     except httpx.RequestError as error:
         return Reply(error=f"OptimistFi could not be reached: {type(error).__name__}.")
     except ValueError:

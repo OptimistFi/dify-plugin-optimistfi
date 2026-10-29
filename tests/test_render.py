@@ -62,7 +62,7 @@ def test_insider_rows_carry_trade_and_filing_dates():
     assert "open-market buys and sells first, then other filings, newest first within each" in text
 
     assert (
-        "- **2026-09-21** Timothy S. Teter (EVP, General Counsel and Sec): S (sale) of $2.8M, 12,483 shares at $222.19"
+        "- **2026-09-21** Timothy S. Teter (EVP, General Counsel and Sec): sold $2.8M, 12,483 shares at $222.19"
         " · filed [2026-09-23](https://www.sec.gov/Archives/edgar/data/1045810/000169684126000014/)"
     ) in text
 
@@ -107,11 +107,30 @@ def test_projected_earnings_reads_as_an_estimate():
     summary = summarize("calendar_aapl")
 
     assert (
-        "| 2026-10-29 | earnings | estimated: expected imminently — projected 2026-10-29 from filing cadence"
-        " (median gap 91d over 8 filings)"
+        "- **2026-10-29** earnings, estimated: expected imminently — projected 2026-10-29 from filing cadence"
+        " (median gap 91d over 8 filings), not yet filed; typically confirmed within days. Last reported 2026-07-30."
     ) in summary.text
     assert summary.variables["next_earnings_confidence"] == "estimated"
-    assert "| confirmed" not in summary.text  # the basis may say a date is "typically confirmed within days"
+    assert ", confirmed" not in summary.text  # the basis may say a date is "typically confirmed within days"
+
+
+@pytest.mark.parametrize("name", ["calendar_aapl", "calendar_mrna", "calendar_lly"])
+def test_calendar_is_a_list_so_a_long_basis_wraps_in_the_chat_bubble(name):
+    # A table scrolled sideways in Dify's bubble and cut the basis off mid-word.
+    assert "|---" not in summarize(name).text
+
+
+def test_trial_readouts_name_the_study_and_link_its_registry_entry():
+    text = summarize("calendar_lly").text
+
+    assert (
+        "- **2027-02-01** trial readout, estimated: A First-In-Human Study of LY3954068 in Participants With Early"
+        " Symptomatic Alzheimer's Disease (Phase 1; Alzheimer Disease; recruiting)"
+        " · [ClinicalTrials.gov](https://clinicaltrials.gov/study/NCT06297590)"
+    ) in text
+    assert "primary completion date as its sponsor filed it on ClinicalTrials.gov" in text
+    assert "fda event" not in text
+    assert text.endswith("_Source: SEC EDGAR filing cadence, computed by OptimistFi; ClinicalTrials.gov_")
 
 
 def test_8k_text_starts_at_the_first_item_not_the_xbrl_header():
@@ -175,3 +194,30 @@ def test_a_flow_label_reads_as_words():
     text = render.company_filings(records, kind="events").text
 
     assert "**mildly bearish**" in text and "mildly_bearish" not in text
+
+
+@pytest.mark.parametrize(
+    ("data", "text"),
+    [
+        (
+            {"txn_code": "S", "direction": "sold", "value": 2.8e6, "shares": 12483, "price": 222.19},
+            "sold $2.8M, 12,483 shares at $222.19",
+        ),
+        (
+            {"txn_code": "G", "direction": "gave away", "value": 0, "shares": 500000, "price": 0},
+            "gave away 500,000 shares",
+        ),
+        (
+            {"txn_code": "S", "direction": "sold", "sell_to_cover": True, "value": 1e4, "shares": 50, "price": 200},
+            "sold $10K, 50 shares at $200.00, to cover tax on vesting stock",
+        ),
+        ({"txn_code": "A", "value": None, "shares": 1000, "price": None}, "received 1,000 shares"),
+        ({"txn_code": "K", "shares": 10}, "filed Form 4 code K for 10 shares"),
+        (
+            {"txn_code": "F", "direction": "surrendered", "shares": 2000, "price": 220},
+            "surrendered 2,000 shares at $220.00",
+        ),
+    ],
+)
+def test_insider_lines_say_what_was_done_without_a_bare_code(data, text):
+    assert render._insider_act(data) == text

@@ -8,11 +8,11 @@ identity:
     pt_BR: Negociações de insiders
 description:
   human:
-    en_US: A US company's Form 4 insider filings from SEC EDGAR. Open-market buys and sells come first, then grants, option exercises, tax withholding and gifts, newest first within each. Who, role, code, shares and dollar value, with the trade date and the date the filing made it public.
-    zh_Hans: 来自 SEC EDGAR 的美国公司 Form 4 内部人申报。公开市场买卖排在前面，其后是授予、期权行权、预扣税和赠与，各组内最新的在前：人员、职位、代码、股数和金额，并给出交易日期和申报公开日期。
-    ja_JP: SEC EDGAR の米国企業の Form 4 インサイダー届出。市場での買い・売りが先で、その後に付与、オプション行使、源泉徴収、贈与が続き、各グループ内は新しい順：人物、役職、コード、株数、金額。取引日と届出で公開された日付付き。
-    pt_BR: Os registros Form 4 de insiders de uma empresa dos EUA na SEC EDGAR. Compras e vendas no mercado vêm primeiro, depois concessões, exercícios de opções, retenção de impostos e doações, do mais recente dentro de cada grupo. Quem, cargo, código, ações e valor em dólares, com a data do negócio e a data em que o registro o tornou público.
-  llm: A US company's Form 4 insider filings from SEC EDGAR - who, role, code, shares and dollar value. Open-market buys and sells (codes P and S) come first, then grants, option exercises, tax withholding and gifts, newest first within each group, so with a small row limit a recent gift can sit below older sales. Each record's event_time is the trade date and as_of is the filing date, when the trade became public.
+    en_US: A US company's Form 4 insider filings from SEC EDGAR. Open-market buys and sells come first, then grants, option exercises, tax withholding and gifts, newest first within each. Who, role, what they did, shares and dollar value, with the trade date and the date the filing made it public.
+    zh_Hans: 来自 SEC EDGAR 的美国公司 Form 4 内部人申报。公开市场买卖排在前面，其后是授予、期权行权、预扣税和赠与，各组内最新的在前：人员、职位、所做操作、股数和金额，并给出交易日期和申报公开日期。
+    ja_JP: SEC EDGAR の米国企業の Form 4 インサイダー届出。市場での買い・売りが先で、その後に付与、オプション行使、源泉徴収、贈与が続き、各グループ内は新しい順：人物、役職、行った取引、株数、金額。取引日と届出で公開された日付付き。
+    pt_BR: Os registros Form 4 de insiders de uma empresa dos EUA na SEC EDGAR. Compras e vendas no mercado vêm primeiro, depois concessões, exercícios de opções, retenção de impostos e doações, do mais recente dentro de cada grupo. Quem, cargo, o que fez, ações e valor em dólares, com a data do negócio e a data em que o registro o tornou público.
+  llm: A US company's Form 4 insider filings from SEC EDGAR - who, role, what they did (direction, with the Form 4 code in txn_code), shares and dollar value. Open-market buys and sells (codes P and S) come first, then grants, option exercises, tax withholding and gifts, newest first within each group, so with a small row limit a recent gift can sit below older sales. Each record's event_time is the trade date and as_of is the filing date, when the trade became public.
 parameters:
   - name: company
     type: string

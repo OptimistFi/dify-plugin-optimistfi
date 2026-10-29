@@ -81,10 +81,40 @@ def test_timeout_explains_itself(_post):
 @patch("optimistfi.client.httpx.post")
 def test_http_status_is_reported(post):
     request = httpx.Request("POST", client.ENDPOINT)
-    response = httpx.Response(503, request=request, text="unavailable")
-    post.return_value = response
+    post.return_value = httpx.Response(404, request=request, text="not found")
 
-    assert client.call("get_insider_trades", {"entity": "AAPL"}).error == "OptimistFi answered with HTTP 503."
+    assert client.call("get_insider_trades", {"entity": "AAPL"}).error == "OptimistFi answered with HTTP 404."
+    assert post.call_count == 1
+
+
+@patch("optimistfi.client.time.sleep")
+@patch("optimistfi.client.httpx.post")
+def test_a_restart_gap_is_retried_once(post, sleep):
+    request = httpx.Request("POST", client.ENDPOINT)
+    post.side_effect = [
+        httpx.Response(502, request=request, text="bad gateway"),
+        httpx.Response(200, request=request, text=tool_reply({"result": [{"type": "insider_trade"}]})),
+    ]
+
+    reply = client.call("get_insider_trades", {"entity": "AAPL"})
+
+    assert reply.error is None and reply.records == [{"type": "insider_trade"}]
+    sleep.assert_called_once_with(client.RETRY_SECONDS)
+
+
+@patch("optimistfi.client.time.sleep")
+@patch("optimistfi.client.httpx.post")
+def test_a_server_still_restarting_says_so(post, _sleep):
+    request = httpx.Request("POST", client.ENDPOINT)
+    post.return_value = httpx.Response(503, request=request, text="unavailable")
+
+    error = client.call("get_insider_trades", {"entity": "AAPL"}).error
+
+    assert error == (
+        "OptimistFi's server did not answer (HTTP 503) on two tries 5 seconds apart. "
+        "It sends this status while it restarts, which takes a few minutes."
+    )
+    assert post.call_count == 2
 
 
 @patch("optimistfi.client.httpx.post", side_effect=httpx.ConnectError("refused"))

@@ -20,7 +20,7 @@ Não há nada a configurar: nenhuma chave de API, credencial ou etapa de autoriz
 
 | Ferramenta | O que responde |
 |---|---|
-| **Negociações de insiders** | Os registros Form 4 de uma empresa dos EUA na SEC EDGAR: quem, cargo, código da operação, ações e valor em dólares, com a data do negócio e a data em que se tornou público. Compras e vendas no mercado vêm primeiro, depois concessões, exercícios de opções e doações. |
+| **Negociações de insiders** | Os registros Form 4 de uma empresa dos EUA na SEC EDGAR: quem, cargo, o que fez, ações e valor em dólares, com a data do negócio e a data em que se tornou público. Compras e vendas no mercado vêm primeiro, depois concessões, exercícios de opções e doações. |
 | **Negociações do Congresso** | Divulgações de ações da Câmara dos EUA sob o STOCK Act, por ticker ou por membro. Uma resposta por ticker começa com compras, vendas e os membros mais ativos; cada linha indica a conta em que a operação foi feita e leva ao registro. |
 | **Registros na SEC** | Eventos 8-K, comunicados de resultados, o texto dos 8-Ks recentes e sinais de alerta de governança (registros atrasados, troca de auditor, concentração de vendas de insiders). |
 | **Calendário de resultados** | A próxima data de resultados projetada pelo ritmo de registros da própria empresa, marcada como estimativa com a sua base, e as leituras de ensaios clínicos quando a empresa os tem. |
