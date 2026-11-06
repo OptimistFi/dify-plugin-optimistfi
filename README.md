@@ -2,7 +2,7 @@
 
 US company disclosures as tools for Dify agents and workflows: insider trades from SEC Form 4, House members' stock trades, 8-K events and red-flag checks from SEC EDGAR, and projected earnings dates. No API key.
 
-**The same data on optimistfi.com:** [perps markets](https://optimistfi.com/perps/markets) · [perps news](https://optimistfi.com/perps/news) · [prop firms](https://optimistfi.com/perps/props) · [prop rule changes](https://optimistfi.com/perps/props/changes) · [stock theses](https://optimistfi.com/stocks) · [insider buying](https://optimistfi.com/insider-buying) · [House members' trades](https://optimistfi.com/congress)
+**The same data on optimistfi.com:** [stock theses](https://optimistfi.com/stocks) · [insider buying](https://optimistfi.com/insider-buying) · [House members' trades](https://optimistfi.com/congress)
 
 [![Dify Plugin](https://img.shields.io/badge/Dify-Plugin-1C64F2)](https://marketplace.dify.ai)
 [![OptimistFi](https://img.shields.io/badge/OptimistFi-Data-3B1FB0)](https://optimistfi.com)
